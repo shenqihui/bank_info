@@ -27,6 +27,7 @@
   </div>
   <div>
     <button onclick="check()">识别</button>
+    <button onclick="download()">下载识别后的信息</button>
   </div>
   <div>
     如果出现该银行卡不存在之类不存在的数据，请将卡号及手动识别后的错误信息发送给管理员
@@ -53,9 +54,31 @@
       newArr.map((elem) => {
         stringNewArr.push(elem.join(','));
       })
-      var str = stringNewArr.join('\n');
-      document.getElementById('textarea2').value = str;
+      var result = stringNewArr.join('\n');
+      document.getElementById('textarea2').value = result;
     }
+
+
+    function download() {
+      var stringNewArr = [
+        '卡号,银行'
+      ];
+      newArr.map((elem) => {
+        elem[0] = `${elem[0]}` + "\t";
+        stringNewArr.push(elem.join(','));
+      });
+
+      var result = stringNewArr.join('\n');
+
+      var BOM = "\uFEFF";
+        if (window.Blob && window.URL && window.URL.createObjectURL) {
+          var csvData = new Blob([BOM + result], { type: 'text/csv' });
+          location.href = URL.createObjectURL(csvData);
+        } else {
+          location.href = 'data:attachment/csv;charset=utf-8,' + BOM + encodeURIComponent(result);
+        }
+    }
+
     function check() {
       var text = `${document.getElementById('textarea1').value}`.trim();
       var arr = text.split(/[(\r\n)\r\n]+/);
