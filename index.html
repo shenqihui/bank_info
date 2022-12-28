@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>银行卡信息识别</title>
+  <script src="https://cdn.staticfile.org/jquery/3.3.1/jquery.min.js"></script>
+  <script src="./bankcardinfo.js"></script>
+</head>
+<body>
+  <style>
+    * {
+      font-size: 12px;
+      line-height: 1.4em;
+    }
+  </style>
+  <div style="display: flex;">
+    <div style="width:300px;margin:1em;">
+      <div>贴入原始数据</div>
+      <textarea style="width: 100%" rows="40" id="textarea1"></textarea>
+    </div>
+    <div style="width:500px;margin:1em;">
+      <div>计算后的数据</div>
+      <textarea readonly="readonly" style="width: 100%" rows="40" id="textarea2"></textarea>
+    </div>
+  </div>
+  <div>
+    <button onclick="check()">识别</button>
+  </div>
+  <div>
+    如果出现该银行卡不存在之类不存在的数据，请将卡号及手动识别后的错误信息发送给管理员
+  </div>
+
+  <script>
+    var newArr = [];
+    var timeout = false;
+    function printInfo() {
+      var stringNewArr = [];
+      newArr.map((elem) => {
+        stringNewArr.push(elem.join(','));
+      })
+      var str = stringNewArr.join('\n');
+      document.getElementById('textarea2').value = str;
+    }
+    function check() {
+      var text = `${document.getElementById('textarea1').value}`.trim();
+      var arr = text.split(/[(\r\n)\r\n]+/);
+      newArr = [];
+      // console.log('arr', arr);
+      arr.map((elem, index) => {
+        // console.log('elem', elem);
+        var account = `${elem||''}`.trim();
+        var elemArr = [account];
+
+        newArr.push(elemArr);
+
+        getBankBin(account, (err, data) => {
+          if (err) {
+            console.log('err', err, typeof err);
+            var errArr = err.split(':');
+            if (errArr && errArr[1]) {
+              elemArr.push(errArr[1]);
+            }
+            else {
+              elemArr.push(err);
+            }
+          }
+          else {
+            elemArr.push(data.bankName);
+            elemArr.push(data.cardTypeName);
+          }
+
+          clearTimeout(timeout);
+          timeout = setTimeout(() => {
+            printInfo();
+          }, 50);
+        });
+      });
+    }
+
+
+    getBankBin('6227003320240034988', (err, data) => {
+      if (err) {
+        console.log('err', err);
+        return ;
+      }
+
+      console.log('data', data);
+    });
+  </script>
+</body>
+</html>
