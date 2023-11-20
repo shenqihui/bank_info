@@ -13,7 +13,7 @@
 
 # 在线使用
 
-http://bank_info.61qt.cn/
+https://bankinfo.61qt.cn/
 
 # 使用方式
 1，将所有的银行卡信息复制成一个单列的 excel  
