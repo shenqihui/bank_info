@@ -1500,7 +1500,7 @@
       reg: /^(622141)\d{10}$/g,
       cardType: "DC"
     }]
-  }, , {
+  }, {
     bankName: "安徽怀宁农村商业银行股份有限公司",
     bankCode: "HNRCU",
     patterns: [{
